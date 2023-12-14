@@ -47,6 +47,37 @@ Add to that one of (depending whether you have komodo, gvim or netbeans):
 <li>Set the [CFG:file_link_format] setting to <code>xdebug://%f@%l</code></li>
 </ul>
 
+<h4>XDG Desktop</h4>
+<ul>
+<li>Create program: <pre>
+>${HOME?}/.local/bin/xdebug-edit <<'EOF' cat
+#!/usr/bin/env sh
+file="${1?Argument required for "${0##*/}".}"
+file="${file#xdebug://}"
+line="${file##*@}"
+file="${file%@*}"
+EOF
+</pre></li>
+<li>Add actual editor to start to xdebug-edit script, for example: <pre>exec vi +$line $file</pre></li>
+<li>Might need to add: <pre>
+>>${HOME}/.profile printf 'PATH="${HOME}/.local/bin:${PATH}"
+</pre></li>
+<li><pre>
+>${HOME?}/.local/share/applications/xdebug-edit.desktop <<'EOF' cat
+[Desktop Entry]
+Name=Xdebug edit
+Exec=xdebug-edit %U
+Type=Application
+Terminal=false
+MimeType=x-scheme-handler/xdebug-protocol;
+EOF
+# Might be needed: xdg-desktop-menu install xdebug-edit.desktop
+</pre></li>
+<li>Inform xdg about default xdebug-protocol handler: <pre>
+xdg-mime default xdebug-edit.desktop x-scheme-handler/xdebug-protocol
+</pre></li>
+</ul>
+
 <h4>Windows and Netbeans</h4>
 <ul>
 <li>Create the file <code>netbeans.bat</code> and save it in your path (<code>C:\Windows</code> will work):
