@@ -28,22 +28,23 @@ xdebug.file_link_format='javascript: var r = new XMLHttpRequest; r.open("get", "
 <ul>
 <li>Open <a href="about:config">about:config</a></li>
 <li>Add a new boolean setting "network.protocol-handler.expose.xdebug" and set it to "false"</li>
-<li>Add the following into a shell script <code>~/bin/ff-xdebug.sh</code>:
+<li>Add the following into a shell script <code>~/.local/bin/open-xdebug.sh</code>:
 <pre>
-#! /bin/sh
-
-f=`echo $1 | cut -d @ -f 1 | sed 's/xdebug:\/\///'`
-l=`echo $1 | cut -d @ -f 2`
+#!/usr/bin/env sh
+file="${1?Argument required for "${0##*/}".}"
+file="${file#xdebug://}"
+line="${file##*@}"
+file="${file%@*}"
 </pre>
 Add to that one of (depending whether you have komodo, gvim or netbeans):
 <ul>
-	<li><code>komodo $f -l $l</code></li>
-	<li><code>gvim --remote-tab +$l $f</code></li>
-	<li><code>netbeans "$f:$l"</code></li>
+	<li><code>exec komodo $file -l $line</code></li>
+	<li><code>exec gvim --remote-tab +$line $file</code></li>
+	<li><code>exec netbeans "$file:$line"</code></li>
 </ul>
 </pre>
 </li>
-<li>Make the script executable with <code>chmod +x ~/bin/ff-xdebug.sh</code></li>
+<li>Make the script executable with <code>chmod +x ~/.local/bin/open-xdebug.sh</code></li>
 <li>Set the [CFG:file_link_format] setting to <code>xdebug://%f@%l</code></li>
 </ul>
 
